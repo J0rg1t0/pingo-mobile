@@ -24,7 +24,7 @@ function MainTabs() {
         headerShown: false,
         tabBarIcon: ({ color, size }) => {
           let iconName: any;
-          if (route.name === 'Home') iconName = 'location';
+          if (route.name === 'HomeScreen') iconName = 'location';
           else if (route.name === 'NewAlarm') iconName = 'alarm';
           else if (route.name === 'Preferences') iconName = 'settings';
 
@@ -34,7 +34,7 @@ function MainTabs() {
         tabBarInactiveTintColor: 'gray',
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} options={{ title: 'Alarmes' }} />
+      <Tab.Screen name="HomeScreen" component={HomeScreen} options={{ title: 'Alarmes' }} />
       <Tab.Screen name="NewAlarm" component={NewAlarmScreen} options={{ title: 'Novo Alarme' }} />
       <Tab.Screen name="Preferences" component={PreferencesScreen} options={{ title: 'Preferências' }} />
     </Tab.Navigator>
