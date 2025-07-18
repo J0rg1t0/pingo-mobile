@@ -1,21 +1,23 @@
 // App.tsx
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
-import { StatusBar } from 'expo-status-bar';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// import * as Notifications from 'expo-notifications';
 
 import HomeScreen from './screens/HomeScreen';
-import PreferencesScreen from './screens/PreferencesScreen';
 import NewAlarmScreen from './screens/NewAlarmScreen';
-import WelcomeScreen from './screens/WelcomeScreen';
-import OnboardingScreen from './screens/OnboardingScreen';
 import EditAlarmScreen from './screens/EditAlarmScreen';
+import { checkProximityAndNotify } from './services/locationService';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import PreferencesScreen from './screens/PreferencesScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StatusBar } from 'react-native';
+import WelcomeScreen from './screens/WelcomeScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
+
 
 function MainTabs() {
   return (
@@ -59,7 +61,7 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <StatusBar style="auto" />
+      <StatusBar barStyle="default" />
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {firstLaunch && <Stack.Screen name="Welcome" component={WelcomeScreen} />}
         <Stack.Screen name="Main" component={MainTabs} />

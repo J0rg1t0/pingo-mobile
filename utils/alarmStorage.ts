@@ -10,6 +10,11 @@ export type Alarm = {
   radius: number;
   days: string[];  // ["Seg", "Qua", "Sex"]
   enabled: boolean;
+  action: {
+    type: 'whatsapp' | 'sms' | 'email' | 'alexa';
+    target: string;  // Phone number, email, etc.
+    message: string; // Message to send
+  } | undefined;
 };
 
 export async function getAlarms(): Promise<Alarm[]> {
