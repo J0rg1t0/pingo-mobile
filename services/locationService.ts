@@ -1,7 +1,9 @@
-// services/locationMonitor.ts
 import * as Location from 'expo-location';
-// import * as Notifications from 'expo-notifications';
-import { Alarm, getAlarms, saveAlarm } from '../utils/alarmStorage';
+import * as Notifications from 'expo-notifications';
+import { Alarm, getAlarms, saveAlarm, updateAlarm } from '../utils/alarmStorage';
+import * as TaskManager from 'expo-task-manager';
+
+
 
 function getDistanceFromLatLonInMeters(lat1: number, lon1: number, lat2: number, lon2: number) {
   const R = 6371e3;
@@ -33,14 +35,14 @@ export async function checkProximityAndNotify() {
     if (!alarm.enabled || !alarm.days.includes(day)) continue;
     const dist = getDistanceFromLatLonInMeters(latitude, longitude, alarm.latitude, alarm.longitude);
     if (dist <= alarm.radius) {
-      // Notifications.scheduleNotificationAsync({
-      //   content: {
-      //     title: `PinGo: Você chegou em ${alarm.name}`,
-      //     body: 'Hora de fazer o que você programou! 🛎️',
-      //     sound: true,
-      //   },
-      //   trigger: null,
-      // });
+      Notifications.scheduleNotificationAsync({
+        content: {
+          title: `PinGo: Você chegou em ${alarm.name}`,
+          body: 'Hora de fazer o que você programou! 🛎️',
+          sound: true,
+        },
+        trigger: null,
+      });
     }
   }
 }

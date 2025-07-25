@@ -30,13 +30,13 @@ export default function DaySelector({ selectedDays, onChange }: any) {
 const styles = StyleSheet.create({
   container: { flexDirection: 'row', flexWrap: 'wrap', marginVertical: 10 },
   day: {
-    backgroundColor: '#E1D5F0',
+    backgroundColor: '#D3D2FD',
     padding: 8,
     borderRadius: 10,
     margin: 5,
   },
   selected: {
-    backgroundColor: '#6A1B9A',
+    backgroundColor: '#2949EB',
   },
   text: {
     color: '#fff',

@@ -1,4 +1,3 @@
-// components/FrequencySelector.tsx
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
@@ -73,7 +72,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   selectedOptionButton: {
-    backgroundColor: '#6A1B9A',
+    backgroundColor: '#2949EB',
   },
   optionButtonText: {
     color: '#555',

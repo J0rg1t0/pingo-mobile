@@ -20,7 +20,7 @@ export default {
       }
     },
     android: {
-      package: "com.pingo.mobile", // Obrigatório
+      package: "com.pingo.mobile", 
       permissions: [
         "ACCESS_BACKGROUND_LOCATION",
         "ACCESS_FINE_LOCATION",
@@ -28,9 +28,14 @@ export default {
       ],
       config: {
         googleMaps: {
-          apiKey: process.env.API_KEY_GOOGLE_MAPS, // ou coloque direto a chave
+          apiKey: process.env.API_KEY_GOOGLE_MAPS || 'AIzaSyCZuVSod3Fq0AG2oUlu4EeAim6Mn-xeV6E', 
         },
       },
+      notification: { 
+        icon: "./assets/icon.png",
+        color: "#6A1B9A", 
+        sound: "default" 
+      }
     },
     plugins: [
       [
@@ -42,7 +47,7 @@ export default {
       ]
     ],
     extra: {
-      apiKeyGoogleMaps: process.env.API_KEY_GOOGLE_MAPS,
+      apiKeyGoogleMaps: process.env.API_KEY_GOOGLE_MAPS || 'AIzaSyCZuVSod3Fq0AG2oUlu4EeAim6Mn-xeV6E',
       eas: {
         projectId: "6cdf472b-eda3-44d0-a6eb-8a79d2399444"      }
     },

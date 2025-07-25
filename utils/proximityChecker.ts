@@ -1,4 +1,3 @@
-// utils/proximityChecker.ts
 import * as Location from 'expo-location';
 import { getAlarms, saveAlarm, Alarm } from './alarmStorage';
 import { sendLocalNotification } from './notificationManager';

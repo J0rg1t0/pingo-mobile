@@ -1,18 +1,17 @@
-// screens/EditAlarmScreen.tsx
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Dimensions, ActivityIndicator, ScrollView } from 'react-native'; // Adicionado ScrollView
 import MapView, { Marker, Circle } from 'react-native-maps';
 import Slider from '@react-native-community/slider';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Constants from 'expo-constants';
-
+import * as Location from 'expo-location';
 import CustomPlacesAutoComplete from '../components/CustomPlacesAutoComplete';
 import DaySelector from '../components/DaySelector';
 import FrequencySelector from '../components/FrequencySelector'; // Novo componente
 import ReminderActionForm from '../components/ReminderActionForm'; // Novo componente
 import MessageActionForm, { MessageItem } from '../components/MessageActionForm'; // Novo componente e interface
 
-import { saveAlarm, Alarm } from '../utils/alarmStorage';
+import { saveAlarm, Alarm, updateAlarm } from '../utils/alarmStorage';
 
 const screen = Dimensions.get('window');
 const apiKeyGoogleMaps = Constants.expoConfig?.extra?.apiKeyGoogleMaps;
@@ -180,14 +179,60 @@ export default function EditAlarmScreen() {
       messageActions: selectedActionType === 'message' ? messageActions : undefined,
     };
 
-    await saveAlarm(updated);
-    navigation.navigate('Home');
+    await updateAlarm(updated);
+    resetForm();
+    navigation.navigate('HomeScreen');
   };
+
+  const cancel = () => {
+    Alert.alert('Cancelar Edição', 'Tem certeza que deseja cancelar as alterações?', [
+      { text: 'Não', style: 'cancel' },
+      {
+        text: 'Sim', onPress: () => {
+          resetForm();
+          navigation.navigate('HomeScreen');
+        }
+      }
+    ]);
+  }
+
+  const resetForm = () => {
+    setName('');
+    setRadius(0);
+    setSelectedDays([]);
+    setFrequency('once');
+    setSelectedActionType('none');
+    setReminderDescription('');
+    setMessageActions([]);
+  };
+
+  const goToCurrentLocation = async () => {
+    try {
+      const current = await Location.getCurrentPositionAsync({});
+      const coords = {
+        latitude: current.coords.latitude,
+        longitude: current.coords.longitude,
+      };
+      setLocation(coords);
+      await reverseGeocode(coords);
+
+      if (mapRef.current) {
+        mapRef.current.animateToRegion({
+          ...coords,
+          latitudeDelta: 0.005,
+          longitudeDelta: 0.005,
+        });
+      }
+    } catch (error) {
+      Alert.alert('Erro', 'Não foi possível obter a localização atual.');
+    }
+  };
+
 
   if (loadingInitialAddress) {
     return (
       <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-        <ActivityIndicator size="large" color="#6A1B9A" />
+        <ActivityIndicator size="large" color="#2949EB" />
         <Text style={{ marginTop: 10 }}>Carregando alarme...</Text>
       </View>
     );
@@ -206,28 +251,34 @@ export default function EditAlarmScreen() {
         }
       />
 
-      <MapView
-        ref={mapRef}
-        style={styles.map}
-        initialRegion={{
-          latitude: location.latitude,
-          longitude: location.longitude,
-          latitudeDelta: mapDeltas.latitudeDelta,
-          longitudeDelta: mapDeltas.longitudeDelta,
-        }}
-        onPress={handleMapPress}
-        onRegionChangeComplete={(region) => {
-          if (!loadingInitialAddress) {
+      <View style={{ flex: 1 }}>
+        <MapView
+          ref={mapRef}
+          style={{ flex: 1 }}
+          initialRegion={{
+            latitude: location.latitude,
+            longitude: location.longitude,
+            latitudeDelta: mapDeltas.latitudeDelta,
+            longitudeDelta: mapDeltas.longitudeDelta,
+          }}
+          onPress={handleMapPress}
+          onRegionChangeComplete={(region) => {
             setMapDeltas({
               latitudeDelta: region.latitudeDelta,
               longitudeDelta: region.longitudeDelta,
             });
-          }
-        }}
-      >
-        <Marker coordinate={location} />
-        <Circle center={location} radius={radius} fillColor="rgba(106,27,154,0.2)" strokeColor="#6A1B9A" />
-      </MapView>
+          }}
+        >
+          <Marker coordinate={location} />
+          <Circle center={location} radius={radius} fillColor="rgba(106,27,154,0.2)" strokeColor="#D3D2FD" />
+        </MapView>
+
+        {/* Botão de localização sobreposto ao mapa */}
+        <TouchableOpacity style={styles.currentLocationButton} onPress={goToCurrentLocation}>
+          <Text style={{ color: '#D3D2FD', fontWeight: 'bold' }}>📍</Text>
+        </TouchableOpacity>
+      </View>
+
 
       <ScrollView style={styles.form}>
         <TextInput
@@ -244,9 +295,9 @@ export default function EditAlarmScreen() {
           minimumValue={1}
           maximumValue={300}
           step={1}
-          minimumTrackTintColor="#6A1B9A"
+          minimumTrackTintColor="#2949EB"
           maximumTrackTintColor="#ccc"
-          thumbTintColor="#6A1B9A"
+          thumbTintColor="#2949EB"
         />
 
         <DaySelector selectedDays={selectedDays} onChange={setSelectedDays} />
@@ -289,8 +340,11 @@ export default function EditAlarmScreen() {
           />
         )}
 
-        <TouchableOpacity style={styles.button} onPress={save}>
+        <TouchableOpacity style={styles.buttonSave} onPress={save}>
           <Text style={styles.buttonText}>Salvar Alterações</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.buttonCancel} onPress={save}>
+          <Text style={styles.buttonText}>Cancelar</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>
@@ -318,8 +372,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#444'
   },
-  button: {
-    backgroundColor: '#6A1B9A',
+  buttonSave: {
+    backgroundColor: '#2949EB',
+    padding: 16,
+    borderRadius: 10,
+    marginTop: 16,
+    alignItems: 'center',
+  },
+  buttonCancel: {
+    backgroundColor: '#EB2929',
     padding: 16,
     borderRadius: 10,
     marginTop: 16,
@@ -345,7 +406,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   selectedActionTypeButton: {
-    backgroundColor: '#6A1B9A',
+    backgroundColor: '#2949EB',
   },
   actionTypeButtonText: {
     color: '#555',
@@ -353,5 +414,15 @@ const styles = StyleSheet.create({
   },
   selectedActionTypeButtonText: {
     color: '#fff',
+  },
+  currentLocationButton: {
+    position: 'absolute',
+    bottom: 140,
+    right: 20,
+    backgroundColor: '#fff',
+    borderRadius: 30,
+    padding: 10,
+    elevation: 5,
+    zIndex: 999,
   },
 });

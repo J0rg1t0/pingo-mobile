@@ -1,4 +1,3 @@
-// components/MessageActionForm.tsx
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native'; // Removido FlatList
 import { Ionicons } from '@expo/vector-icons';
@@ -156,7 +155,7 @@ const styles = StyleSheet.create({
   messageTypeText: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#6A1B9A',
+    color: '#D3D2FD',
     marginBottom: 2,
   },
   messageTargetText: {
@@ -198,7 +197,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   selectedTypeButton: {
-    backgroundColor: '#6A1B9A',
+    backgroundColor: '#2949EB',
   },
   typeButtonText: {
     color: '#555',

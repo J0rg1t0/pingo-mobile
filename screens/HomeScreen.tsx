@@ -1,9 +1,8 @@
-// screens/HomeScreen.tsx
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert, Switch } from 'react-native';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { getAlarms, deleteAlarm, Alarm } from '../utils/alarmStorage';
+import { getAlarms, deleteAlarm, Alarm, updateAlarm } from '../utils/alarmStorage';
 
 export default function HomeScreen() {
   const [alarms, setAlarms] = useState<Alarm[]>([]);
@@ -31,6 +30,12 @@ export default function HomeScreen() {
     ]);
   };
 
+  const toggleAlarm = async (alarm: Alarm) => {
+    const updatedAlarm = { ...alarm, enabled: !alarm.enabled };
+    await updateAlarm(updatedAlarm);
+    loadAlarms();
+  };
+
   const renderItem = ({ item }: { item: Alarm }) => (
     <TouchableOpacity
       style={styles.card}
@@ -40,17 +45,23 @@ export default function HomeScreen() {
         <Text style={styles.title}>{item.name}</Text>
         <Text style={styles.subtitle}>Raio: {item.radius}m</Text>
         <Text style={styles.subtitle}>Dias: {item.days.join(', ')}</Text>
+        <Text style={styles.subtitle}>Frequência: {item.frequency === 'once' ? 'Uma vez' : 'Sempre'}</Text>
       </View>
-      <TouchableOpacity onPress={() => confirmDelete(item.id)}>
-        <Ionicons name="trash" size={24} color="#B00020" />
-      </TouchableOpacity>
+      <View style={styles.actions}>
+        <Switch
+          value={item.enabled}
+          onValueChange={() => toggleAlarm(item)}
+          thumbColor={item.enabled ? '#2949EB' : '#ccc'}
+          trackColor={{ true: '#aabcfb', false: '#ccc' }}
+        />
+        <TouchableOpacity onPress={() => confirmDelete(item.id)} style={{ marginLeft: 12 }}>
+          <Ionicons name="trash" size={24} color="#B00020" />
+        </TouchableOpacity>
+      </View>
     </TouchableOpacity>
   );
 
   return (
-//     <View style={{ padding: 16 }}>
-//   <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Tela Home Carregando...</Text>
-// </View>
     <View style={styles.container}>
       <FlatList
         data={alarms}
@@ -81,4 +92,5 @@ const styles = StyleSheet.create({
   },
   title: { fontWeight: 'bold', fontSize: 16, marginBottom: 4 },
   subtitle: { fontSize: 13, color: '#666' },
+  actions: { flexDirection: 'row', alignItems: 'center' },
 });

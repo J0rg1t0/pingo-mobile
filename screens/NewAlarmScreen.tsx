@@ -1,6 +1,5 @@
-// screens/NewAlarmScreen.tsx
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Dimensions, ActivityIndicator, ScrollView } from 'react-native'; // Adicionado ScrollView
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Dimensions, ActivityIndicator, ScrollView } from 'react-native'; 
 import MapView, { Marker, Circle } from 'react-native-maps';
 import * as Location from 'expo-location';
 import uuid from 'react-native-uuid';
@@ -10,9 +9,9 @@ import Constants from 'expo-constants';
 
 import CustomPlacesAutoComplete from '../components/CustomPlacesAutoComplete';
 import DaySelector from '../components/DaySelector';
-import FrequencySelector from '../components/FrequencySelector'; // Novo componente
-import ReminderActionForm from '../components/ReminderActionForm'; // Novo componente
-import MessageActionForm, { MessageItem } from '../components/MessageActionForm'; // Novo componente e interface
+import FrequencySelector from '../components/FrequencySelector'; 
+import ReminderActionForm from '../components/ReminderActionForm'; 
+import MessageActionForm, { MessageItem } from '../components/MessageActionForm'; 
 
 import { saveAlarm, Alarm } from '../utils/alarmStorage';
 
@@ -37,10 +36,10 @@ export default function NewAlarmScreen() {
   const [loading, setLoading] = useState(true);
 
   // Novos estados para frequência e ações
-  const [frequency, setFrequency] = useState<'once' | 'repeat'>('once'); // Estado para frequência
-  const [selectedActionType, setSelectedActionType] = useState<'none' | 'reminder' | 'message'>('none'); // Tipo de ação selecionado
-  const [reminderDescription, setReminderDescription] = useState(''); // Descrição do lembrete
-  const [messageActions, setMessageActions] = useState<MessageItem[]>([]); // Lista de ações de mensagem
+  const [frequency, setFrequency] = useState<'once' | 'repeat'>('once'); 
+  const [selectedActionType, setSelectedActionType] = useState<'none' | 'reminder' | 'message'>('none'); 
+  const [reminderDescription, setReminderDescription] = useState(''); 
+  const [messageActions, setMessageActions] = useState<MessageItem[]>([]); 
 
   const [mapAddress, setMapAddress] = useState('');
   const [mapDeltas, setMapDeltas] = useState(getDefaultCloseZoomDeltas());
@@ -53,7 +52,7 @@ export default function NewAlarmScreen() {
         console.log('Permissão de localização:', status);
         if (status !== 'granted') {
           Alert.alert('Permissão negada', 'Não foi possível obter a localização. Usando localização padrão.');
-          const fallbackLoc = { latitude: -12.9714, longitude: -38.5014 }; // Salvador - fallback
+          const fallbackLoc = { latitude: -12.9714, longitude: -38.5014 }; 
           setLocation(fallbackLoc);
           setMapAddress('Salvador, BA, Brasil');
         } else {
@@ -176,13 +175,56 @@ export default function NewAlarmScreen() {
     };
 
     await saveAlarm(alarm);
-    navigation.navigate('Home');
+    navigation.navigate('HomeScreen');
   };
+
+  const cancel = () => {
+    Alert.alert('Cancelar', 'Tem certeza que deseja cancelar? Todas as alterações serão perdidas.', [
+      { text: 'Não', style: 'cancel' },
+      { text: 'Sim', onPress: () => {
+        resetForm();
+        navigation.navigate('HomeScreen') 
+      }
+      },
+    ]);
+  }
+
+  const resetForm = () => {
+    setName('');
+    setRadius(0);
+    setSelectedDays([]);
+    setFrequency('once');
+    setSelectedActionType('none');
+    setReminderDescription('');
+    setMessageActions([]);
+  };
+
+  const goToCurrentLocation = async () => {
+      try {
+        const current = await Location.getCurrentPositionAsync({});
+        const coords = {
+          latitude: current.coords.latitude,
+          longitude: current.coords.longitude,
+        };
+        setLocation(coords);
+        await reverseGeocode(coords);
+  
+        if (mapRef.current) {
+          mapRef.current.animateToRegion({
+            ...coords,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
+          });
+        }
+      } catch (error) {
+        Alert.alert('Erro', 'Não foi possível obter a localização atual.');
+      }
+    };
 
   if (loading || !location) {
     return (
       <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-        <ActivityIndicator size="large" color="#6A1B9A" />
+        <ActivityIndicator size="large" color="#2949EB" />
         <Text style={{ marginTop: 10 }}>Carregando mapa...</Text>
       </View>
     );
@@ -200,29 +242,35 @@ export default function NewAlarmScreen() {
         }
         }
       />
-
-      <MapView
-        ref={mapRef}
-        style={styles.map}
-        initialRegion={{
-          latitude: location.latitude,
-          longitude: location.longitude,
-          latitudeDelta: mapDeltas.latitudeDelta,
-          longitudeDelta: mapDeltas.longitudeDelta,
-        }}
-        onPress={handleMapPress}
-        onRegionChangeComplete={(region) => {
+<View style={{ flex: 1 }}>
+        <MapView
+          ref={mapRef}
+          style={{ flex: 1 }}
+          initialRegion={{
+            latitude: location.latitude,
+            longitude: location.longitude,
+            latitudeDelta: mapDeltas.latitudeDelta,
+            longitudeDelta: mapDeltas.longitudeDelta,
+          }}
+          onPress={handleMapPress}
+          onRegionChangeComplete={(region) => {
             setMapDeltas({
-                latitudeDelta: region.latitudeDelta,
-                longitudeDelta: region.longitudeDelta,
+              latitudeDelta: region.latitudeDelta,
+              longitudeDelta: region.longitudeDelta,
             });
-        }}
-      >
-        <Marker coordinate={location} />
-        <Circle center={location} radius={radius} fillColor="rgba(106,27,154,0.2)" strokeColor="#6A1B9A" />
-      </MapView>
+          }}
+        >
+          <Marker coordinate={location} />
+          <Circle center={location} radius={radius} fillColor="rgba(106,27,154,0.2)" strokeColor="#D3D2FD" />
+        </MapView>
 
-      <ScrollView style={styles.form}>
+        {/* Botão de localização sobreposto ao mapa */}
+        <TouchableOpacity style={styles.currentLocationButton} onPress={goToCurrentLocation}>
+          <Text style={{ color: '#D3D2FD', fontWeight: 'bold' }}>📍</Text>
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView style={styles.form} keyboardShouldPersistTaps="handled">
         <TextInput
           style={styles.input}
           placeholder="Nome do Alarme"
@@ -237,9 +285,9 @@ export default function NewAlarmScreen() {
           minimumValue={1}
           maximumValue={300}
           step={1}
-          minimumTrackTintColor="#6A1B9A"
+          minimumTrackTintColor="#2949EB"
           maximumTrackTintColor="#ccc"
-          thumbTintColor="#6A1B9A"
+          thumbTintColor="#2949EB"
         />
 
         <DaySelector selectedDays={selectedDays} onChange={setSelectedDays} />
@@ -282,8 +330,11 @@ export default function NewAlarmScreen() {
           />
         )}
 
-        <TouchableOpacity style={styles.button} onPress={save}>
+        <TouchableOpacity style={styles.buttonSave} onPress={save}>
           <Text style={styles.buttonText}>Salvar Alarme</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.buttonCancel} onPress={cancel}>
+          <Text style={styles.buttonText}>Cancelar</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>
@@ -311,12 +362,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#444'
   },
-  button: {
-    backgroundColor: '#6A1B9A',
+  buttonSave: {
+    backgroundColor: '#2949EB',
     padding: 16,
     borderRadius: 10,
     marginTop: 16,
-    marginBottom: 20, // Espaço extra para o ScrollView
+    alignItems: 'center',
+  },
+  buttonCancel: {
+    backgroundColor: '#EB2929',
+    padding: 16,
+    borderRadius: 10,
+    marginTop: 16,
+    marginBottom: 20, 
     alignItems: 'center',
   },
   buttonText: {
@@ -338,7 +396,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   selectedActionTypeButton: {
-    backgroundColor: '#6A1B9A',
+    backgroundColor: '#2949EB',
   },
   actionTypeButtonText: {
     color: '#555',
@@ -346,5 +404,15 @@ const styles = StyleSheet.create({
   },
   selectedActionTypeButtonText: {
     color: '#fff',
+  },
+  currentLocationButton: {
+    position: 'absolute',
+    bottom: 140,
+    right: 20,
+    backgroundColor: '#fff',
+    borderRadius: 30,
+    padding: 10,
+    elevation: 5,
+    zIndex: 999,
   },
 });

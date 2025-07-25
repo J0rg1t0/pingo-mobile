@@ -1,4 +1,3 @@
-// components/CustomPlacesAutocomplete.js
 import React, { useState, useCallback, useEffect, useRef } from 'react'; // Adicionado useEffect e useRef
 import {
   View,
@@ -99,8 +98,8 @@ const CustomPlacesAutoComplete = ({
         if (mapRef && mapRef.current) {
           mapRef.current.animateToRegion({
             ...newLocation,
-            latitudeDelta: 0.01,
-            longitudeDelta: 0.01,
+            latitudeDelta: 0.0025,
+            longitudeDelta: 0.0025,
           });
         }
 

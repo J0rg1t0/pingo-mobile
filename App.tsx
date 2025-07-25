@@ -1,4 +1,3 @@
-// App.tsx
 import 'react-native-get-random-values';
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
@@ -34,7 +33,7 @@ function MainTabs() {
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: '#6A1B9A',
+        tabBarActiveTintColor: '#2949EB',
         tabBarInactiveTintColor: 'gray',
       })}
     >
@@ -65,26 +64,15 @@ export default function App() {
     
         // 2. Agendar chamadas periódicas a checkProximityAndNotify()
         const intervalId = setInterval(() => {
+          console.log('checkProximityAndNotify chamado');
           checkProximityAndNotify();
         }, 10000); // A cada 10 segundos (10000 ms)
     
         // Limpar o intervalo quando o componente for desmontado
         return () => clearInterval(intervalId);
-      }, []); // Array de dependências vazio para rodar apenas uma vez na montagem
+      }, []); 
 
   if (loading) return null;
-  
-  // return (
-  //   <NavigationContainer>
-  //     <StatusBar barStyle="default" />
-  //     <Stack.Navigator screenOptions={{ headerShown: false }}>
-  //       <Stack.Screen name="Welcome" component={WelcomeScreen} />
-  //       <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }} />
-  //       <Stack.Screen name="Main" component={MainTabs} />
-  //       <Stack.Screen name="EditAlarm" component={EditAlarmScreen} />
-  //     </Stack.Navigator>
-  //   </NavigationContainer>
-  // );
 
     return (
       <NavigationContainer>
