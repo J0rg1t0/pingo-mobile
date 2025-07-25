@@ -5,10 +5,10 @@ const dias = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 
 export default function DaySelector({ selectedDays, onChange }: any) {
   const toggleDay = (day: string) => {
-    if (selectedDays.includes(day)) {
-      onChange(selectedDays.filter((d: string) => d !== day));
+    if ((selectedDays || []).includes(day)) {
+      onChange((selectedDays || []).filter((d: string) => d !== day));
     } else {
-      onChange([...selectedDays, day]);
+      onChange([...(selectedDays || []), day]);
     }
   };
 
