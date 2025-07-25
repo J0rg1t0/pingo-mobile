@@ -60,7 +60,7 @@ export const saveAlarm = async (alarm: Alarm): Promise<void> => {
  * Carrega todos os alarmes salvos.
  * @returns {Promise<Alarm[]>} Uma promessa que resolve para um array de alarmes.
  */
-export const loadAlarms = async (): Promise<Alarm[]> => {
+export const getAlarms = async (): Promise<Alarm[]> => {
   try {
     const storedAlarms = await AsyncStorage.getItem(ALARMS_KEY);
     return storedAlarms ? JSON.parse(storedAlarms) : [];

@@ -10,12 +10,12 @@ export default function WelcomeScreen({ navigation }: any) {
       </Text>
 
       <Image
-        source={{ uri: 'https://i.imgur.com/7VdZkYg.png' }} // você pode trocar por uma local no assets
+        source={require('../assets/icon.png')} // você pode trocar por uma local no assets
         style={styles.image}
         resizeMode="contain"
       />
 
-      <TouchableOpacity style={styles.button} onPress={() => navigation.replace('Home')}>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.replace('Main')}>
         <Text style={styles.buttonText}>Vamos Começar</Text>
       </TouchableOpacity>
     </View>

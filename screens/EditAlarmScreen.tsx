@@ -69,7 +69,7 @@ export default function EditAlarmScreen() {
   const reverseGeocode = async (coords: { latitude: number; longitude: number }) => {
     try {
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coords.latitude},${coords.longitude}&key=${apiKeyGoogleMaps}&language=pt-BR`
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coords.latitude},${coords.longitude}&key=AIzaSyCZuVSod3Fq0AG2oUlu4EeAim6Mn-xeV6E&language=pt-BR`
       );
       const data = await response.json();
 

@@ -34,7 +34,7 @@ export default function HomeScreen() {
   const renderItem = ({ item }: { item: Alarm }) => (
     <TouchableOpacity
       style={styles.card}
-      onPress={() => navigation.navigate('EditAlarm', { alarm: item })}
+      onPress={() => navigation.navigate('EditAlarmScreen', { alarm: item })}
     >
       <View style={{ flex: 1 }}>
         <Text style={styles.title}>{item.name}</Text>
@@ -48,12 +48,20 @@ export default function HomeScreen() {
   );
 
   return (
+//     <View style={{ padding: 16 }}>
+//   <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Tela Home Carregando...</Text>
+// </View>
     <View style={styles.container}>
       <FlatList
         data={alarms}
         keyExtractor={item => item.id}
         renderItem={renderItem}
         contentContainerStyle={{ paddingBottom: 100 }}
+        ListEmptyComponent={
+          <Text style={{ textAlign: 'center', marginTop: 32, color: '#666', fontSize: 16 }}>
+            Nenhum alarme cadastrado.
+          </Text>
+        }
       />
     </View>
   );

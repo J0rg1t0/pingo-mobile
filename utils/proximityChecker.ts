@@ -1,6 +1,6 @@
 // utils/proximityChecker.ts
 import * as Location from 'expo-location';
-import { loadAlarms, saveAlarm, Alarm } from './alarmStorage';
+import { getAlarms, saveAlarm, Alarm } from './alarmStorage';
 import { sendLocalNotification } from './notificationManager';
 import { sendMultipleMessages } from './messageSender';
 
@@ -28,7 +28,7 @@ export async function checkProximityAndNotify() {
     }
 
     const currentLocation = await Location.getCurrentPositionAsync({});
-    const alarms = await loadAlarms();
+    const alarms = await getAlarms();
 
     for (const alarm of alarms) {
       if (!alarm.enabled) continue;
