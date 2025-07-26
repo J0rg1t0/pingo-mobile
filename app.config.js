@@ -28,7 +28,7 @@ export default {
       ],
       config: {
         googleMaps: {
-          apiKey: process.env.API_KEY_GOOGLE_MAPS || 'AIzaSyCZuVSod3Fq0AG2oUlu4EeAim6Mn-xeV6E', 
+          apiKey: process.env.API_KEY_GOOGLE_MAPS, 
         },
       },
       notification: { 
@@ -47,7 +47,7 @@ export default {
       ]
     ],
     extra: {
-      apiKeyGoogleMaps: process.env.API_KEY_GOOGLE_MAPS || 'AIzaSyCZuVSod3Fq0AG2oUlu4EeAim6Mn-xeV6E',
+      apiKeyGoogleMaps: process.env.API_KEY_GOOGLE_MAPS,
       eas: {
         projectId: "6cdf472b-eda3-44d0-a6eb-8a79d2399444"      }
     },
